@@ -32,28 +32,35 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 
 
-app.get("/", function (req, res) {
+app.get("/", function (req, res) 
+{
     res.render("index");
 });
 
 let msg = "";
 var cuser = "";
 
-app.get("/login", function (req, res) {
+app.get("/login", function (req, res) 
+{
     res.render("login", { msg: msg });
 });
 
-app.post("/login", function (req, res) {
+app.post("/login", function (req, res) 
+{
     let email = req.body.email;
     let password = req.body.password;
 
-    User.find(function (err, users) {
-        if (err) {
+    User.find(function (err, users) 
+    {
+        if (err) 
+        {
             console.log(err);
         } else {
-            users.forEach(function (user) {
+            users.forEach(function (user) 
+            {
                 cuser = user;
-                if (user.email == email && user.password == password) {
+                if (user.email == email && user.password == password) 
+                {
                     res.redirect("/home");
                 } else {
                     msg = "Incorrect email or password";
@@ -64,11 +71,13 @@ app.post("/login", function (req, res) {
     });
 });
 
-app.get("/register", function (req, res) {
+app.get("/register", function (req, res)
+{
     res.render("register");
 });
 
-app.post("/register", function (req, res) {
+app.post("/register", function (req, res) 
+{
     console.log(req.body);
     let user_name = req.body.name;
     let user_email = req.body.email;
@@ -86,9 +95,12 @@ app.post("/register", function (req, res) {
     res.redirect("/login");
 });
 
-app.get("/add", function (req, res) {
-    Book.find(function (err, books) {
-        if (err) {
+app.get("/add", function (req, res) 
+{
+    Book.find(function (err, books) 
+    {
+        if (err) 
+        {
             console.log(err);
         } else {
             res.render("addBook", { books: books, user: cuser });
@@ -96,45 +108,51 @@ app.get("/add", function (req, res) {
     });
 });
 
-app.post("/add", function (req, res) {
+app.post("/add", function (req, res) 
+{
     console.log(req.body.bookName);
-    Book.findOne({ "title": req.body.bookName }, function (err, book) {
+    Book.findOne({ "title": req.body.bookName }, function (err, book) 
+    {
         console.log(book);
         console.log(req.body.usr);
 
-        User.findOne({ _id: req.body.usr }, async function (err, user) {
-            if (err) {
+        User.findOne({ _id: req.body.usr }, async function (err, user) 
+        {
+            if (err) 
+            {
                 console.log(err);
             } else {
                 await user.books.push(book);
                 user.save();
                 res.redirect("/home");
             }
-
         });
     });
 });
 
 
-app.get("/home", function (req, res) {
-    User.findOne({ _id: cuser._id }, function (err, user) {
+app.get("/home", function (req, res) 
+{
+    User.findOne({ _id: cuser._id }, function (err, user) 
+    {
         res.render("home", { user: user });
     });
 
 });
 
-app.get("/delete/:bookd", function (req, res) {
+app.get("/delete/:bookd", function (req, res) 
+{
     const bookId = req.params.bookd;
-
-    User.findOneAndUpdate({ _id: cuser._id }, { $pull: { books: { _id: bookId } } }, function (err, foundList) {
-        if (!err) {
+    User.findOneAndUpdate({ _id: cuser._id }, { $pull: { books: { _id: bookId } } }, function (err, foundList)
+    {
+        if (!err) 
+        {
             res.redirect("/home");
         }
     });
 });
 
-
-
-app.listen("3000", function () {
-    console.log("server is running on port 3000");
+app.listen("3000", function () 
+{
+    console.log("Server is running on Port 3000");
 });
