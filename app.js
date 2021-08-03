@@ -40,6 +40,7 @@ let msg = "";
 var cuser = "";
 
 app.get("/login", function (req, res) {
+    console.log(cuser);
     res.render("login", { msg: msg });
 });
 
@@ -110,15 +111,16 @@ app.post("/add", function (req, res) {
                 user.save();
                 res.redirect("/home");
             }
-
         });
     });
 });
 
 
 app.get("/home", function (req, res) {
-    User.findOne({ _id: cuser._id }, function (err, user) {
-        res.render("home", { user: user });
+    console.log(cuser);
+    User.findOne({ _id: cuser._id }, async function (err, user) {
+        console.log(user);
+        await res.render("home", { user: user });
     });
 
 });
@@ -126,9 +128,23 @@ app.get("/home", function (req, res) {
 app.get("/delete/:bookd", function (req, res) {
     const bookId = req.params.bookd;
 
-    User.findOneAndUpdate({ _id: cuser._id }, { $pull: { books: { _id: bookId } } }, function (err, foundList) {
+    User.findOneAndUpdate({ _id: cuser._id }, { $pull: { books: { _id: bookId } } }, function (err, foundBook) {
         if (!err) {
             res.redirect("/home");
+        }
+    });
+});
+
+app.get("/edit/:bookd", function (req, res) {
+    const bookId = req.params.bookd;
+
+    User.findOne({ _id: cuser._id }, function (err, user) {
+        if (!err) {
+            user.books.forEach(function (book) {
+                if (book._id == bookId) {
+                    res.render("edit", { book: book });
+                }
+            });
         }
     });
 });
