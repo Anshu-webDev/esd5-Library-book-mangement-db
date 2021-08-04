@@ -33,6 +33,10 @@ const User = mongoose.model("User", userSchema);
 
 
 app.get("/", function (req, res) {
+    let td = new Date();
+    let cd = td.toISOString().slice(0, 10);
+    console.log(cd);
+    console.log(typeof (cd));
     res.render("index");
 });
 
@@ -44,23 +48,45 @@ app.get("/login", function (req, res) {
     res.render("login", { msg: msg });
 });
 
+// app.post("/login", function (req, res) {
+//     let email = req.body.email;
+//     let password = req.body.password;
+
+//     User.find(function (err, users) {
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             users.forEach(function (user) {
+//                 cuser = user;
+//                 if (user.email == email && user.password == password) {
+//                     res.redirect("/home");
+//                 } else {
+//                     msg = "Incorrect email or password";
+//                     res.redirect("/login");
+//                 }
+//             });
+//         }
+//     });
+// });
+
 app.post("/login", function (req, res) {
     let email = req.body.email;
     let password = req.body.password;
 
-    User.find(function (err, users) {
+    User.findOne({ email: email }, function (err, foundUser) {
         if (err) {
             console.log(err);
         } else {
-            users.forEach(function (user) {
-                cuser = user;
-                if (user.email == email && user.password == password) {
+            if (foundUser) {
+                if (foundUser.password == password) {
+                    msg = "";
+                    cuser = foundUser;
                     res.redirect("/home");
                 } else {
                     msg = "Incorrect email or password";
                     res.redirect("/login");
                 }
-            })
+            }
         }
     });
 });
