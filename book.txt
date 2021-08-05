@@ -1,4 +1,3 @@
-
 var bookdoc = [
     {
         "author": "Chinua Achebe",
@@ -86,10 +85,14 @@ var bookdoc = [
     }
 ];
 
-Book.insertMany(bookdoc, function (err) {
-    if (err) {
+Book.insertMany(bookdoc, function (err)
+{
+    if (err)
+{
         console.log(err);
-    } else {
-        console.log("Successfully saved all the book to booksdb");
+    } 
+
+else {
+        console.log("Successfully saved all books");
     }
 });
