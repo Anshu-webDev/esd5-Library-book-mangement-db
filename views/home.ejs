@@ -27,7 +27,9 @@
             <div class="alert alert-primary" role="alert">
 
                 <span class="bookDetail">
-                    <%= book.title %>—<%= book.author %>
+                    <a href="<%= book.link %>">
+                        <%= book.title %>—<%= book.author %>
+                    </a>
                 </span>
 
                 issue date: <%= book.issue_date %> &nbsp;&nbsp;&nbsp;
