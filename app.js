@@ -16,7 +16,9 @@ const bookSchema = new mongoose.Schema({
     language: String,
     link: String,
     title: String,
-    year: Number
+    year: Number,
+    issue_date: String,
+    renew_date: String
 });
 
 const Book = mongoose.model("Book", bookSchema);
@@ -33,10 +35,6 @@ const User = mongoose.model("User", userSchema);
 
 
 app.get("/", function (req, res) {
-    let td = new Date();
-    let cd = td.toISOString().slice(0, 10);
-    console.log(cd);
-    console.log(typeof (cd));
     res.render("index");
 });
 
@@ -44,30 +42,10 @@ let msg = "";
 var cuser = "";
 
 app.get("/login", function (req, res) {
-    console.log(cuser);
+    // console.log(cuser);
     res.render("login", { msg: msg });
 });
 
-// app.post("/login", function (req, res) {
-//     let email = req.body.email;
-//     let password = req.body.password;
-
-//     User.find(function (err, users) {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             users.forEach(function (user) {
-//                 cuser = user;
-//                 if (user.email == email && user.password == password) {
-//                     res.redirect("/home");
-//                 } else {
-//                     msg = "Incorrect email or password";
-//                     res.redirect("/login");
-//                 }
-//             });
-//         }
-//     });
-// });
 
 app.post("/login", function (req, res) {
     let email = req.body.email;
@@ -126,13 +104,19 @@ app.get("/add", function (req, res) {
 app.post("/add", function (req, res) {
     console.log(req.body.bookName);
     Book.findOne({ "title": req.body.bookName }, function (err, book) {
-        console.log(book);
+        // console.log(book);
         console.log(req.body.usr);
 
         User.findOne({ _id: req.body.usr }, async function (err, user) {
             if (err) {
                 console.log(err);
             } else {
+                var today = new Date();
+                var i_date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+                today.setDate(today.getDate() + 7);
+                var r_date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+                book.issue_date = i_date;
+                book.renew_date = r_date;
                 await user.books.push(book);
                 user.save();
                 res.redirect("/home");
@@ -143,9 +127,7 @@ app.post("/add", function (req, res) {
 
 
 app.get("/home", function (req, res) {
-    console.log(cuser);
     User.findOne({ _id: cuser._id }, async function (err, user) {
-        console.log(user);
         await res.render("home", { user: user });
     });
 
@@ -168,14 +150,25 @@ app.get("/edit/:bookd", function (req, res) {
         if (!err) {
             user.books.forEach(function (book) {
                 if (book._id == bookId) {
-                    res.render("edit", { book: book });
+                    var date = new Date(book.renew_date);
+
+                    date.setDate(date.getDate() + 7);
+                    var ren_date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+
+                    book.renew_date = ren_date;
+
+                    user.save();
+
+                    res.redirect("/home");
                 }
             });
         }
     });
 });
 
-
+app.get("/logout", function (req, res) {
+    res.redirect("/");
+})
 
 app.listen("3000", function () {
     console.log("server is running on port 3000");

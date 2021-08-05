@@ -26,11 +26,14 @@
         <% user.books.forEach(function(book){ %>
             <div class="alert alert-primary" role="alert">
 
-                <%= book.title %>—<%= book.author %>
+                <span class="bookDetail">
+                    <%= book.title %>—<%= book.author %>
+                </span>
 
-
+                issue date: <%= book.issue_date %> &nbsp;&nbsp;&nbsp;
+                    return date: <%= book.renew_date %>
                         <a href="/edit/<%= book._id %>"><button type="button" class="btn btn-success"
-                                style="position: absolute; right: 70px;">update</button></a>
+                                style="position: absolute; right: 70px;">Renew</button></a>
                         <a href="/delete/<%= book._id %>"><button type="button" class="btn btn-danger"
                                 style="position: absolute; right: 0;">Return</button></a>
 
